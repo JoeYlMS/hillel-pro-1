@@ -231,7 +231,7 @@ let users = [
     }
 ]
 
-let qwe = function (object, tag, [...key],path, style="") {
+let elCreate = function (object, tag, [...key],path, style="") {
     let x = ``
     key.forEach((item) => {
         x += item + ": " + object[item] + "; "
@@ -249,14 +249,14 @@ let renderUsers = function (users) {
         let card = document.createElement('div')
         card.classList = 'card m-1 p-3 bg-secondary text-white col-12 col-lg-5'
         data.appendChild(card)
-        qwe(user, 'h4', ['username'], card);
-        qwe(user, 'h5', ['name'], card);
-        qwe(user, 'p', ['id'], card, 'mb-1 position-absolute id');
-        qwe(user, 'a', ['website'], card);
-        qwe(user, 'a', ['email'], card);
-        qwe(user, 'p', ['phone'], card, 'mb-1');
-        qwe(user.address, 'p', ['city','street','suite','zipcode'], card, 'mb-3');
-        qwe(user.address.geo, 'p', ['lat','lng'], card, 'text-center mb-0');
+        elCreate(user, 'h4', ['username'], card);
+        elCreate(user, 'h5', ['name'], card);
+        elCreate(user, 'p', ['id'], card, 'mb-1 position-absolute id');
+        elCreate(user, 'a', ['website'], card);
+        elCreate(user, 'a', ['email'], card);
+        elCreate(user, 'p', ['phone'], card, 'mb-1');
+        elCreate(user.address, 'p', ['city','street','suite','zipcode'], card, 'mb-3');
+        elCreate(user.address.geo, 'p', ['lat','lng'], card, 'text-center mb-0');
     })
     document.body.appendChild(data)
 }
