@@ -231,26 +231,32 @@ let users = [
     }
 ]
 
-let qwe = function (object, tag, key, path) {
-
+let qwe = function (object, tag, [...key],path, style="") {
+    let x = ``
+    key.forEach((item) => {
+        x += item + ": " + object[item] + "; "
+    })
     let box = document.createElement(tag)
-    box.textContent = key + ': ' + object[key]
-    box.classList = 'style'
+    box.textContent = x
+    box.classList = style
     path.appendChild(box)
 }
 
 let renderUsers = function (users) {
     let data = document.createElement("div")
-    data.classList = 'd-flex flex-wrap justify-content-around'
+    data.classList = 'row d-flex flex-wrap justify-content-around'
     users.forEach((user) => {
         let card = document.createElement('div')
-        card.classList = 'card m-1 p-3 bg-secondary text-white '
+        card.classList = 'card m-1 p-3 bg-secondary text-white col-12 col-lg-5'
         data.appendChild(card)
-        qwe(user, 'h3', 'username', card);
-        qwe(user, 'h4', 'name', card);
-        qwe(user, 'p', 'id', card);
-        qwe(user, 'a', 'website', card);
-        qwe(user,'p', 'phone', card);
+        qwe(user, 'h4', ['username'], card);
+        qwe(user, 'h5', ['name'], card);
+        qwe(user, 'p', ['id'], card, 'mb-1 position-absolute id');
+        qwe(user, 'a', ['website'], card);
+        qwe(user, 'a', ['email'], card);
+        qwe(user, 'p', ['phone'], card, 'mb-1');
+        qwe(user.address, 'p', ['city','street','suite','zipcode'], card, 'mb-3');
+        qwe(user.address.geo, 'p', ['lat','lng'], card, 'text-center mb-0');
     })
     document.body.appendChild(data)
 }
