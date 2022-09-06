@@ -231,7 +231,14 @@ let users = [
     }
 ]
 
-let elCreate = function (object, tag, [...key],path, style="") {
+let btnCreate = (teg, str, path, style) => {
+    let btn = document.createElement(teg)
+    btn.innerHTML = str;
+    btn.classList = style
+    path.append(btn)
+}
+
+let elCreate = function (object, tag, [...key], path, style = "") {
     let x = ``
     key.forEach((item) => {
         x += item + ": " + object[item] + "; "
@@ -244,10 +251,10 @@ let elCreate = function (object, tag, [...key],path, style="") {
 
 let renderUsers = function (users) {
     let data = document.createElement("div")
-    data.classList = 'row d-flex flex-wrap justify-content-around'
+    data.classList = 'row d-flex flex-wrap p-3 justify-content-around'
     users.forEach((user) => {
         let card = document.createElement('div')
-        card.classList = 'card m-1 p-3 bg-secondary text-white col-12 col-lg-5'
+        card.classList = 'card hover m-2 p-3 bg-secondary text-white col-12 col-sm-5'
         data.appendChild(card)
         elCreate(user, 'h4', ['username'], card);
         elCreate(user, 'h5', ['name'], card);
@@ -255,9 +262,17 @@ let renderUsers = function (users) {
         elCreate(user, 'a', ['website'], card);
         elCreate(user, 'a', ['email'], card);
         elCreate(user, 'p', ['phone'], card, 'mb-1');
-        elCreate(user.address, 'p', ['city','street','suite','zipcode'], card, 'mb-3');
-        elCreate(user.address.geo, 'p', ['lat','lng'], card, 'text-center mb-0');
+        elCreate(user.address, 'p', ['city', 'street', 'suite', 'zipcode'], card, 'mb-3');
+        elCreate(user.address.geo, 'p', ['lat', 'lng'], card, 'text-center mb-0');
+        btnCreate('btn', 'Remove', card, 'remove btn m-auto bg-primary')
     })
     document.body.appendChild(data)
 }
 renderUsers(users)
+
+let container = document.querySelector('.row')
+console.log(container)
+container.addEventListener('click', (event) => {
+    if (event.target.closest('.card')) event.target.closest('.card').classList.toggle('bg-danger')
+    if (event.target.classList.contains('remove')) event.target.closest('.card').remove()
+})
