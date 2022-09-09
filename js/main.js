@@ -231,48 +231,140 @@ let users = [
     }
 ]
 
-let btnCreate = (teg, str, path, style) => {
-    let btn = document.createElement(teg)
-    btn.innerHTML = str;
-    btn.classList = style
-    path.append(btn)
-}
+
 
 let elCreate = function (object, tag, [...key], path, style = "") {
-    let x = ``
+    let x = ``;
     key.forEach((item) => {
-        x += item + ": " + object[item] + "; "
-    })
-    let box = document.createElement(tag)
-    box.textContent = x
-    box.classList = style
-    path.appendChild(box)
+        x += item + ": " + object[item] + "; ";
+    });
+    let box = document.createElement(tag);
+    box.textContent = x;
+    box.classList = style;
+    path.appendChild(box);
 }
 
-let renderUsers = function (users) {
-    let data = document.createElement("div")
-    data.classList = 'row d-flex flex-wrap p-3 justify-content-around'
+let renderUsers =  (users) => {
+    let data = document.createElement("div");
+    data.classList = 'row d-flex flex-wrap p-3 justify-content-around mainCard';
     users.forEach((user) => {
-        let card = document.createElement('div')
-        card.classList = 'card hover m-2 p-3 bg-secondary text-white col-12 col-sm-5'
-        data.appendChild(card)
-        elCreate(user, 'h4', ['username'], card);
-        elCreate(user, 'h5', ['name'], card);
-        elCreate(user, 'p', ['id'], card, 'mb-1 position-absolute id');
-        elCreate(user, 'a', ['website'], card);
-        elCreate(user, 'a', ['email'], card);
-        elCreate(user, 'p', ['phone'], card, 'mb-1');
-        elCreate(user.address, 'p', ['city', 'street', 'suite', 'zipcode'], card, 'mb-3');
-        elCreate(user.address.geo, 'p', ['lat', 'lng'], card, 'text-center mb-0');
-        btnCreate('btn', 'Remove', card, 'remove btn m-auto bg-primary')
+        renderUser(user, data)
     })
     document.body.appendChild(data)
 }
-renderUsers(users)
 
-let container = document.querySelector('.row')
-console.log(container)
+document.addEventListener('DOMContentLoaded', function () {
+    let userForm = qs('.form-user');
+
+    userForm.addEventListener('submit', (event) => {
+        event.preventDefault()
+        let card = {
+            "id": '___',
+            "name": qsValue('.creatName'),
+            "username": qsValue('.creatFirstName'),
+            "email": qsValue('.creatMail'),
+            "address": {
+                "street": qsValue('.creatStreet'),
+                "suite": '',
+                "city": "",
+                "zipcode": "",
+                "geo": {
+                    "lat": "-------",
+                    "lng": "-------"
+                }
+            },
+            "phone": qsValue('.creatTel'),
+            "website": qsValue('.website'),
+            "company": {
+                "name": "Romaguera-Crona",
+                "catchPhrase": "Multi-layered client-server neural-net",
+                "bs": "harness real-time e-markets"
+            }
+        }
+        let arr = userForm.querySelectorAll('input')
+
+        if (!checkInput(arr)) alert('Заполните все поля')
+        else {
+            alert('Карточка создана')
+            users.push(card)
+            addUserDom(card, qs('.mainCard'))
+            clearInput(userForm.querySelectorAll('input'))
+        }
+    })
+})
+
+renderUsers(users)
+let container = document.querySelector('.mainCard')
+
 container.addEventListener('click', (event) => {
-    if (event.target.closest('.card')) event.target.closest('.card').classList.toggle('bg-danger')
+    if (event.target.closest('.card')) event.target.closest('.card').classList.toggle('bg-info')
     if (event.target.classList.contains('remove')) event.target.closest('.card').remove()
 })
+
+function qsValue(selector) {
+    return document.querySelector(selector).value
+}
+
+function renderUser(user, data) {
+    let card = document.createElement('div');
+    card.classList = 'card hover m-2 p-3 bg-secondary text-white col-12 col-sm-5';
+    data.appendChild(card);
+    elCreate(user, 'h4', ['username'], card);
+    elCreate(user, 'h5', ['name'], card);
+    elCreate(user, 'p', ['id'], card, 'mb-1 position-absolute id');
+    elCreate(user, 'a', ['website'], card);
+    elCreate(user, 'a', ['email'], card);
+    elCreate(user, 'p', ['phone'], card, 'mb-1');
+    elCreate(user.address, 'p', ['city', 'street', 'suite', 'zipcode'], card, 'mb-3');
+    elCreate(user.address.geo, 'p', ['lat', 'lng'], card, 'text-center mb-0');
+    btnCreate('btn', 'Remove', card, 'remove btn m-auto bg-primary');
+}
+
+function addUserDom(user, path) {
+    let card = document.createElement('div');
+    card.classList = 'card hover m-2 p-3 bg-secondary text-white col-12 col-sm-5';
+    elCreate(user, 'h4', ['username'], card);
+    elCreate(user, 'h5', ['name'], card);
+    elCreate(user, 'p', ['id'], card, 'mb-1 position-absolute id');
+    elCreate(user, 'a', ['website'], card);
+    elCreate(user, 'a', ['email'], card);
+    elCreate(user, 'p', ['phone'], card, 'mb-1');
+    elCreate(user.address, 'p', [ 'street'], card, 'mb-3');
+    elCreate(user.address.geo, 'p', ['lat', 'lng'], card, 'text-center mb-0');
+    btnCreate('btn', 'Remove', card, 'remove btn m-auto bg-primary');
+    path.append(card)
+
+}
+
+function checkInput(arr) {
+    arr.forEach((elem) => {
+        if (elem.value === "") {
+            elem.classList.add('check_color')
+        } else {
+            elem.classList.remove('check_color')
+        }
+    })
+    for (const arrElement of arr) {
+        if (arrElement.value === "") {
+            return false
+        }
+    }
+    return true
+}
+
+function qs(selector) {
+    return document.querySelector(selector);
+}
+
+function btnCreate  (tag, str, path, style)  {
+    let btn = document.createElement(tag);
+    btn.innerHTML = str;
+    btn.classList = style;
+    path.append(btn);
+}
+
+function clearInput(arr){
+    arr.forEach((el)=>{
+        el.value = ''
+    })
+}
