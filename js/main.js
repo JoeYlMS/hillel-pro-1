@@ -231,7 +231,14 @@ let users = [
     }
 ]
 
+qs('.btn_exit').addEventListener('click', (event) => {
+    if (event.target) {
+        window.localStorage.removeItem('login')
+        window.location.reload()
+    }
+})
 
+let telRegex = /^\+\d\d\(\d{3}\)\d{3}-\d{2}-\d{2}$/
 
 let elCreate = function (object, tag, [...key], path, style = "") {
     let x = ``;
@@ -244,13 +251,14 @@ let elCreate = function (object, tag, [...key], path, style = "") {
     path.appendChild(box);
 }
 
-let renderUsers =  (users) => {
+let renderUsers = (users) => {
+    let js_card = qs('.js_card')
     let data = document.createElement("div");
     data.classList = 'row d-flex flex-wrap p-3 justify-content-around mainCard';
     users.forEach((user) => {
         renderUser(user, data)
     })
-    document.body.appendChild(data)
+    js_card.appendChild(data)
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -259,35 +267,25 @@ document.addEventListener('DOMContentLoaded', function () {
     userForm.addEventListener('submit', (event) => {
         event.preventDefault()
         let card = {
-            "id": '___',
             "name": qsValue('.creatName'),
             "username": qsValue('.creatFirstName'),
             "email": qsValue('.creatMail'),
             "address": {
                 "street": qsValue('.creatStreet'),
-                "suite": '',
-                "city": "",
-                "zipcode": "",
-                "geo": {
-                    "lat": "-------",
-                    "lng": "-------"
-                }
             },
             "phone": qsValue('.creatTel'),
             "website": qsValue('.website'),
-            "company": {
-                "name": "Romaguera-Crona",
-                "catchPhrase": "Multi-layered client-server neural-net",
-                "bs": "harness real-time e-markets"
-            }
-        }
-        let arr = userForm.querySelectorAll('input')
 
-        if (!checkInput(arr)) alert('Заполните все поля')
+        }
+        console.log(qsValue('.creatTel'))
+        console.log( validation(qsValue('.creatTel'), telRegex))
+        let arr = userForm.querySelectorAll('input')
+        if (!checkInput(arr) || !validation(qsValue('.creatTel'), telRegex)) alert('Вы не заполнили все поля либо' +
+            ' заполнили не корректно')
         else {
+            addUserDom(card, qs('.mainCard'))
             alert('Карточка создана')
             users.push(card)
-            addUserDom(card, qs('.mainCard'))
             clearInput(userForm.querySelectorAll('input'))
         }
     })
@@ -301,6 +299,27 @@ container.addEventListener('click', (event) => {
     if (event.target.classList.contains('remove')) event.target.closest('.card').remove()
 })
 
+let formAuth = qs('.loginUser')
+
+auth()
+
+function auth() {
+    if (window.localStorage.getItem('login') === 'access') {
+        qs('.hw31').classList.add('d-none')
+        qs('.main_card').classList.remove('d-none')
+
+    }
+    formAuth.addEventListener('submit', (event) => {
+        event.preventDefault()
+        if (qsValue('.user_login') !== 'admin' && qsValue('.user_pass') !== 'admin') return popUp(qs('.denied'), 500)
+        qs('.user_auth').classList.add('d-none')
+        qs('.main_card').classList.remove('d-none')
+        window.localStorage.setItem('login', 'access')
+        popUp(qs('.access'), 500)
+
+    })
+}
+
 function qsValue(selector) {
     return document.querySelector(selector).value
 }
@@ -311,12 +330,10 @@ function renderUser(user, data) {
     data.appendChild(card);
     elCreate(user, 'h4', ['username'], card);
     elCreate(user, 'h5', ['name'], card);
-    elCreate(user, 'p', ['id'], card, 'mb-1 position-absolute id');
     elCreate(user, 'a', ['website'], card);
     elCreate(user, 'a', ['email'], card);
     elCreate(user, 'p', ['phone'], card, 'mb-1');
-    elCreate(user.address, 'p', ['city', 'street', 'suite', 'zipcode'], card, 'mb-3');
-    elCreate(user.address.geo, 'p', ['lat', 'lng'], card, 'text-center mb-0');
+    elCreate(user.address, 'p', ['street'], card, 'mb-3');
     btnCreate('btn', 'Remove', card, 'remove btn m-auto bg-primary');
 }
 
@@ -325,46 +342,54 @@ function addUserDom(user, path) {
     card.classList = 'card hover m-2 p-3 bg-secondary text-white col-12 col-sm-5';
     elCreate(user, 'h4', ['username'], card);
     elCreate(user, 'h5', ['name'], card);
-    elCreate(user, 'p', ['id'], card, 'mb-1 position-absolute id');
+
     elCreate(user, 'a', ['website'], card);
     elCreate(user, 'a', ['email'], card);
     elCreate(user, 'p', ['phone'], card, 'mb-1');
-    elCreate(user.address, 'p', [ 'street'], card, 'mb-3');
-    elCreate(user.address.geo, 'p', ['lat', 'lng'], card, 'text-center mb-0');
+    elCreate(user.address, 'p', ['street'], card, 'mb-3');
     btnCreate('btn', 'Remove', card, 'remove btn m-auto bg-primary');
     path.append(card)
 
 }
 
 function checkInput(arr) {
+    let isValide = true
     arr.forEach((elem) => {
         if (elem.value === "") {
             elem.classList.add('check_color')
+            isValide = false
         } else {
             elem.classList.remove('check_color')
         }
     })
-    for (const arrElement of arr) {
-        if (arrElement.value === "") {
-            return false
-        }
-    }
-    return true
+
+    return isValide
 }
 
 function qs(selector) {
     return document.querySelector(selector);
 }
 
-function btnCreate  (tag, str, path, style)  {
+function btnCreate(tag, str, path, style) {
     let btn = document.createElement(tag);
     btn.innerHTML = str;
     btn.classList = style;
     path.append(btn);
 }
 
-function clearInput(arr){
-    arr.forEach((el)=>{
+function clearInput(arr) {
+    arr.forEach((el) => {
         el.value = ''
     })
+}
+
+function popUp(elem, time = 1000) {
+    elem.classList.remove('d-none')
+    setTimeout(() => {
+        elem.classList.add('d-none')
+    }, time)
+}
+
+function validation(val, regex) {
+    return regex.test(val)
 }
