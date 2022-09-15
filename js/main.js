@@ -238,7 +238,7 @@ qs('.btn_exit').addEventListener('click', (event) => {
     }
 })
 
-let telRegex = /^\+\d\d\(\d{3}\)\d{3}-\d{2}-\d{2}$/
+let telRegex = /^\+\d\d \(\d{3}\) \d{3}-\d{2}-\d{2}$/
 
 let elCreate = function (object, tag, [...key], path, style = "") {
     let x = ``;
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
         console.log(qsValue('.creatTel'))
-        console.log( validation(qsValue('.creatTel'), telRegex))
+        console.log(validation(qsValue('.creatTel'), telRegex))
         let arr = userForm.querySelectorAll('input')
         if (!checkInput(arr) || !validation(qsValue('.creatTel'), telRegex)) alert('Вы не заполнили все поля либо' +
             ' заполнили не корректно')
@@ -311,7 +311,7 @@ function auth() {
     }
     formAuth.addEventListener('submit', (event) => {
         event.preventDefault()
-        if (qsValue('.user_login') !== 'admin' && qsValue('.user_pass') !== 'admin') return popUp(qs('.denied'), 500)
+        if (qsValue('.user_login') !== 'admin' || qsValue('.user_pass') !== 'admin') return  popUp(qs('.denied'))
         qs('.user_auth').classList.add('d-none')
         qs('.main_card').classList.remove('d-none')
         window.localStorage.setItem('login', 'access')
